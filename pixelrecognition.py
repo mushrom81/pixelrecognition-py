@@ -11,6 +11,12 @@ def sizedArray(width, defaultValue):
         array.append(defaultValue)
     return array
 
+def arrToStr(array):
+    string = ""
+    for i in array:
+        string += str(i) + ","
+    return string
+
 class Node:
     def __init__(self, strengths, layer, bias, output):
         self.strengths = strengths
@@ -71,6 +77,20 @@ class Network:
         self.outputs = []
         for i in range(self.widths[len(self.widths) - 1]):
             self.outputs.append(self.layers[len(self.widths) - 1][i].output)
+    
+    def exportNetwork(self):
+        exportedNetwork = []
+        exportedNetwork.append(self.widths.length)
+        for i in self.widths:
+            exportedNetwork.append(i)
+        for i in self.layers:
+            for j in i:
+                exportedNetwork.append(j.bias);
+                for k in j.strengths:
+                    exportedNetwork.append(k);
+        return exportedNetwork
+
+    # Does not include importNetwork
 
 f = open("tests.csv", "r")
 fileText = f.read()
@@ -128,7 +148,9 @@ generation = []
 for i in range(200):
     generation.append(newNetwork())
 
+generationNumber = 0
 while True:
+    generationNumber += 1
     fitness = sizedArray(len(generation), 0)
     for t in range(6144):
         getNewQuestion()
@@ -138,7 +160,8 @@ while True:
             if round(generation[i].outputs[0]) == answer:
                 fitness[i] += 1
     highestFitness = fitness[largestIndex(fitness)]
-    print([generation[largestIndex(fitness)], 6144 - highestFitness]);
+    print(arrToStr(generation[largestIndex(fitness)].exportNetwork()))
+    print([6144 - highestFitness, generationNumber])
     best = []
     for i in range(5):
         best.append(generation[largestIndex(fitness)].clone())
